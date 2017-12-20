@@ -3,21 +3,32 @@ console.log('Starting node.js');
 const fs = require('fs');
 const notesFile = 'notes-data.json';
 
-var addNote = (title, body) => {
-    var notes = [];
+var fetchNotes = () => {
     try {
-        notes = JSON.parse(fs.readFileSync(notesFile));
+        return JSON.parse(fs.readFileSync(notesFile));
     } catch (e) {
+        return [];
     }
+};
+
+var saveNotes = (notes) => {
+    fs.writeFileSync(notesFile, JSON.stringify(notes));
+};
+
+var addNote = (title, body) => {
+    var notes = fetchNotes();
 
     var duplicateNotes = notes.filter((note) => note.title === title);
+    
     if (duplicateNotes.length === 0){
-        notes.push({
+        var note = {
             title,
             body
-        });
-    
-        fs.writeFileSync(notesFile, JSON.stringify(notes));
+        };
+
+        notes.push(note);
+        saveNotes(notes);
+        return note;
     }
 }
 
